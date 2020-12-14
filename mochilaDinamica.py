@@ -1,57 +1,63 @@
 from archivo import Archivo
-
+from item import Item 
 
 class MochilaPD:
 
     pesomaximo = 0
-    peso=[]
-    valor=[]
+    items=[]
     nombre_archivo = ""
     def __init__(self, nombre_archivo):
         info = Archivo.leer_archivo_mochila(nombre_archivo)
+        print(info[0])
         self.pesomaximo = info[0]
-        self.peso = info[1]
-        self.valor = info[2]
+        self.items = info[1]
         self.nombre_archivo = nombre_archivo
         
     
-    def find_opt(self,i, c, M, values, items, weights):
-        if i <= 0 or c <= 0:
-            return items
+    def mochila(self,items, peso_maximo):
 
-        if (M[i - 1][c] >= (values[i - 1] + M[i - 1][c - weights[i - 1]])) or (c - weights[i - 1]) < 0:
-            self.find_opt(i - 1, c, M, values, items, weights)
+       matriz = []
+       n = len(items)
 
-        else:
-            items.append(i - 1)
-            self.find_opt(i - 1, c - weights[i - 1], M, values, items, weights)
+       for x in range(n):
+           matriz.append([])
+           for y in range(peso_maximo + 1):
+               matriz[x].append(0)
 
-
-    def knapsack(self,n, C, weights, values):
-    # Initialization of matrix of size (n*W)
-        M = [[None for i in range(C + 1)] for j in range(len(values) + 1)]
-
-        for c in range(C + 1):
-            M[0][c] = 0
-
-        for i in range(len(weights) + 1):
-            M[i][0] = 0
-
-        for i in range(1, n + 1):
-            for c in range(1, C + 1):
-                # If current weight exceeds capacity then we cannot take it
-                if weights[i - 1] > c:
-                    M[i][c] = M[i - 1][c]
-
-                # Else we can take it, then find what gives us the optimal value, either
-                # taking it or not taking it and we consider what gives us max value of those
+       for i in range(n):
+            for j in range(peso_maximo + 1):
+                if items[i].weight < j+1:
+                    matriz[i][j] = max(matriz[i-1][j], items[i].value + matriz[i-1][j - items[i].weight])
                 else:
-                    M[i][c] = max(M[i - 1][c], values[i - 1] + M[i - 1][c - weights[i - 1]])
-        items = []
+                    matriz[i][j] = matriz[i-1][j]
 
-        self.find_opt(n, C, M, values, items, weights)
+       res = [item.id for item in self.bottom_up(items, matriz)]
 
-        return M[n][C], items[::-1]
+       return [matriz[n-1][peso_maximo], res]
+
+
+    def bottom_up(self,items, matriz):
+
+       row = len(matriz) - 1
+       col = len(matriz[0]) - 1
+
+       res = []
+
+       while row > -1:
+
+           if row == 0 and items[row].weight <= col:
+               res.append(items[row])
+               break
+
+           if matriz[row][col] != matriz[row-1][col]:
+               res.append(items[row])
+
+               col -= items[row].weight
+
+           row -= 1
+
+       return res
+
     
 
 

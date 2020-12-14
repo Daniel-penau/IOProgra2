@@ -6,24 +6,41 @@ class MochilaFB:
     peso=[]
     valor=[]
     nombre_archivo = ""
+
     def __init__(self, nombre_archivo):
         info = Archivo.leer_archivo_mochila(nombre_archivo)
         self.pesomaximo = info[0]
-        self.peso = info[1]
-        self.valor = info[2]
+        self.items = info[1]
         self.nombre_archivo = nombre_archivo
 
 
 
-    #Returns the maximum value that can be stored by the bag
-    def knapSack(self,n, W,wt, val):
-       # initial conditions
-       if n == 0 or W == 0 :
-          return 0
-       # If weight is higher than capacity then it is not included
-       if (wt[n-1] > W):
-          return self.knapSack(n-1,W, wt, val)
-       # return either nth item being included or not
-       else:
-          return max(val[n-1] + self.knapSack(n-1,W-wt[n-1], wt, val), self.knapSack(n-1,W, wt, val))
+    def peso_total(self,items):
+        return sum(x.weight for x in items)
+
+
+    def valor_total(self,items):
+        return sum(x.value for x in items)
+
+
+    def mochila(self,items, peso_maximo):
+        res = max(self.fuerza_bruta(items, peso_maximo), key=self.valor_total)
+        return [sum(item.value for item in res), [item.id for item in res]]
+
+
+    def fuerza_bruta(self,items, peso_maximo):
+        aux = [p for p in items if p.weight <= peso_maximo]
+
+        res = []
+
+        for p in aux:
+            fb = self.fuerza_bruta([x for x in aux if x != p], peso_maximo - p.weight)
+
+            if len(fb) == 0:
+                res.append([p])
+            else:
+                res.extend([[p] + x for x in fb])
+
+        return res
+       
 
