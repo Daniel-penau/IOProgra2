@@ -1,7 +1,7 @@
 from item import Item 
 
 class Archivo:
-#lee el archivo de entrada
+#lee el archivo de entrada para mochila
     @staticmethod
     def leer_archivo_mochila(file_name):
 
@@ -29,7 +29,6 @@ class Archivo:
                         raise Exception("Error al procesar el  archivo")
                 else:
                     i+=1
-                    print(i)
                     cantidad = int(line_splitted_by_comma[2])
                     while cantidad > 0:
                         item = Item(i,int(line_splitted_by_comma[0]),int(line_splitted_by_comma[1]))
@@ -43,7 +42,7 @@ class Archivo:
 
         except:
             print("El archivo no existe o hay un error dentro del mismo.")
-
+    #lee archivo de entrada para Alineamento de secuencias
     @staticmethod
     def leer_archivo_alineamiento(file_name):
 

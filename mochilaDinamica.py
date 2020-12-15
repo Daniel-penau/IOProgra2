@@ -13,7 +13,7 @@ class MochilaPD:
         self.items = info[1]
         self.nombre_archivo = nombre_archivo
         
-    
+    #funcion que crea la matriz para resolver el problema dinamico
     def mochila(self,items, peso_maximo):
 
        matriz = []
@@ -35,7 +35,7 @@ class MochilaPD:
 
        return [matriz[n-1][peso_maximo], res]
 
-
+    #funcion para encontrar la mejor seleccion de items
     def bottom_up(self,items, matriz):
 
        row = len(matriz) - 1
